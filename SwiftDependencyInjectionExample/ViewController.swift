@@ -6,8 +6,26 @@
 //
 
 import UIKit
+import Swinject
 
 class ViewController: UIViewController {
+    
+    //Swinject
+    let container: Container = {
+        let container = Container()
+        container.register(BackgroundProviding.self) { resolver in
+            return BackgroundProviding()
+        }
+        
+        container.register(AnotherVC.self) { resolver in
+            let vc = AnotherVC(provider: resolver.resolve(BackgroundProviding.self))
+            return vc
+        }
+        
+        
+        return container
+    }()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +43,9 @@ class ViewController: UIViewController {
     }
 
     @objc private func buttonClicked(){
+        if let viewController = container.resolve(AnotherVC.self){
+            present(viewController, animated: true)
+        }
     }
 
 }
